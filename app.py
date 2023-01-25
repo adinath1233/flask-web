@@ -1,6 +1,8 @@
 #First web application in flask
 
-from flask import Flask, render_template
+from flask import Flask, render_template, request
+import pickle
+import numpy as np
 
 app = Flask(__name__)
 
@@ -21,5 +23,13 @@ def contact_page():
 @app.route("/slr")
 def slr():
     return render_template("slr.html")
+
+@app.route("/slr_prediction", methods=['POST'])
+def slr_prediction():
+    experience = float(request.form.get("experience"))
+    model = pickle.load(open("SLR.pkl", "rb"))
+    salary = model.predict([[experience]])[0]
+    return render_template("slr_prediction.html", experience = experience, salary = np.round(salary))
+
 
 app.run(debug=True)
